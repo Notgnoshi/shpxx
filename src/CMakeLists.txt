@@ -1,5 +1,7 @@
 add_library(shpxx)
 
+find_package(shapelib REQUIRED)
+
 file(
     GLOB_RECURSE
     SHPXX_SOURCES
@@ -15,3 +17,6 @@ configure_file(version.cpp.in version.cpp @ONLY)
 
 target_sources(shpxx PRIVATE "${SHPXX_SOURCES}" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 target_include_directories(shpxx PUBLIC "${PROJECT_SOURCE_DIR}/include")
+
+include(ThirdPartyTargetLinkLibraries)
+third_party_target_link_libraries(shpxx PUBLIC shapelib::shp)
