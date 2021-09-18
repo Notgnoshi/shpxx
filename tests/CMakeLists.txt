@@ -9,8 +9,10 @@ file(
     *.cpp
 )
 
+include(ThirdPartyTargetLinkLibraries)
+
 target_sources(shpxx-tests PRIVATE ${SHPXX_TEST_SOURCES})
-target_link_libraries(shpxx-tests GTest::gtest_main)
+third_party_target_link_libraries(shpxx-tests PRIVATE GTest::gtest_main)
 
 # Add 'ALL' to add_custom_target arguments below if autorun mode is enabled (otherwise the
 # CHECK_ALL_ARG variable defaults to empty string)
