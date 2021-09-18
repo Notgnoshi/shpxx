@@ -1,0 +1,46 @@
+name: Tests
+on: [push, pull_request]
+
+jobs:
+  build-and-test-project:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends cmake clang-12 llvm-12 python3 python3-pip
+          pip3 install gcovr
+
+      - name: Build library
+        run: |
+          mkdir build && cd build
+          cmake -DSHPXX_BUILD_DOCS=OFF -DSHPXX_AUTORUN_TESTS=OFF -DSHPXX_INSTRUMENT_COVERAGE=ON ..
+          make shpxx shpxx-tests -j $(nproc)
+
+      - name: Run Tests
+        run: |
+          cd build
+          make check
+
+      - name: Add Test Report PR Annotations
+        uses: mikepenz/action-junit-report@v2
+        if: github.event_name == 'pull_request'
+        with:
+          report_paths: 'build/reports/shpxx-tests.xml'
+
+      - name: Generate Coverage Report
+        run: |
+          cd build
+          make coverage
+
+      - name: Coverage Summary
+        uses: 5monkeys/cobertura-action@master
+        if: github.event_name == 'pull_request'
+        with:
+          path: 'build/reports/shpxx-coverage.xml'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          show_line: true
+          show_branch: true
+          skip_covered: false
+          minimum_coverage: 0
