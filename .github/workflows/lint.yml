@@ -1,4 +1,4 @@
-name: Project linting
+name: Linting
 on: [push]
 
 jobs:
