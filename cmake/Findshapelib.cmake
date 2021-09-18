@@ -4,9 +4,9 @@ FetchContent_Declare(
     shapelib
     GIT_REPOSITORY https://github.com/OSGeo/shapelib.git
     GIT_TAG "master"
-    PATCH_COMMAND
-        ${CMAKE_COMMAND} -DFILE=${CMAKE_CURRENT_BINARY_DIR}/_deps/shapelib-src/CMakeLists.txt -P
-        ${CMAKE_CURRENT_LIST_DIR}/DisableBuildTest.cmake
+    SOURCE_DIR ${PROJECT_BINARY_DIR}/_deps/shapelib-src
+    PATCH_COMMAND ${CMAKE_COMMAND} -DFILE=${PROJECT_BINARY_DIR}/_deps/shapelib-src/CMakeLists.txt
+                  -P ${CMAKE_CURRENT_LIST_DIR}/DisableBuildTest.cmake
 )
 
 FetchContent_GetProperties(shapelib)
