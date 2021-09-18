@@ -44,6 +44,8 @@ cmake_dependent_option(
 set(SHPXX_REPORTS_DIR "${CMAKE_BINARY_DIR}/reports")
 file(MAKE_DIRECTORY "${SHPXX_REPORTS_DIR}")
 
+add_subdirectory(src)
+
 if(SHPXX_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
