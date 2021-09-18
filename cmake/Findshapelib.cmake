@@ -19,6 +19,7 @@ if(NOT shapelib_POPULATED)
     set(BUILD_SHARED_LIBS ON)
 
     add_subdirectory(${shapelib_SOURCE_DIR} ${shapelib_BINARY_DIR} EXCLUDE_FROM_ALL)
+    target_include_directories(shp INTERFACE $<BUILD_INTERFACE:${shapelib_SOURCE_DIR}>)
 
     set(BUILD_SHARED_LIBS ${OLD_BUILD_SHARED_LIBS})
 endif()
