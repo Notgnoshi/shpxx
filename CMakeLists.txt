@@ -20,3 +20,4 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(GTest REQUIRED)
+find_package(shapelib REQUIRED)
