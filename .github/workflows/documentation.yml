@@ -1,0 +1,29 @@
+name: Build and deploy Doxygen documentation to GitHub pages
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-deploy-docs:
+    runs-on: ubuntu-20.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt install cmake doxygen graphviz
+      - name: Build Doxygen documentation
+        run: |
+          mkdir build && cd build
+          cmake -DSHPXX_BUILD_DOCS=ON -DSHPXX_BUILD_PRIVATE_DOCS=ON ..
+          make shpxx-build-docs
+          mv ./docs/html/ ../public/
+      - name: Deploy Doxygen documentation
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public/
+          force_orphan: true
