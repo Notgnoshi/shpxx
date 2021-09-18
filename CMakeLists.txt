@@ -48,6 +48,15 @@ cmake_dependent_option(
     OFF
 )
 
+option(SHPXX_BUILD_DOCS "Build library documentation" ${SHPXX_IS_ROOT_PROJECT})
+cmake_dependent_option(
+    SHPXX_BUILD_PRIVATE_DOCS
+    "Build documentation for private/internal members"
+    ${SHPXX_IS_ROOT_PROJECT}
+    "SHPXX_BUILD_DOCS"
+    OFF
+)
+
 # Make a directory for outputting reports to
 set(SHPXX_REPORTS_DIR "${CMAKE_BINARY_DIR}/reports")
 file(MAKE_DIRECTORY "${SHPXX_REPORTS_DIR}")
@@ -60,4 +69,8 @@ endif()
 
 if(SHPXX_INSTRUMENT_COVERAGE)
     include(AddCoverageTarget)
+endif()
+
+if(SHPXX_BUILD_DOCS)
+    add_subdirectory(docs)
 endif()
