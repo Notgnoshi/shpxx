@@ -16,3 +16,7 @@ project(
 # Default BUILD_SHARED_LIBS to off so that subprojects don't get to be the first place this is
 # defined
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+find_package(GTest REQUIRED)
