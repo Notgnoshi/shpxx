@@ -11,7 +11,6 @@ cmake_minimum_required(VERSION 3.14)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package(GTest REQUIRED)
 find_package(shapelib REQUIRED)
 
 if(NOT DEFINED SHPXX_IS_ROOT_PROJECT)
@@ -20,4 +19,19 @@ if(NOT DEFINED SHPXX_IS_ROOT_PROJECT)
     else()
         set(SHPXX_IS_ROOT_PROJECT OFF)
     endif()
+endif()
+
+include(CMakeDependentOption)
+
+option(SHPXX_BUILD_TESTS "Build library tests" ${SHPXX_IS_ROOT_PROJECT})
+cmake_dependent_option(
+    SHPXX_AUTORUN_TESTS
+    "Auto-run tests after building"
+    ${SHPXX_IS_ROOT_PROJECT}
+    "SHPXX_BUILD_TESTS"
+    OFF
+)
+
+if(SHPXX_BUILD_TESTS)
+    add_subdirectory(tests)
 endif()
