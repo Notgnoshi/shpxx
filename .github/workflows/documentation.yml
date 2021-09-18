@@ -1,4 +1,4 @@
-name: Build and deploy Doxygen documentation to GitHub pages
+name: Documentation
 on:
   push:
     branches:
