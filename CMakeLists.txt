@@ -39,6 +39,13 @@ cmake_dependent_option(
     "SHPXX_BUILD_TESTS"
     OFF
 )
+cmake_dependent_option(
+    SHPXX_INSTRUMENT_COVERAGE
+    "Instrument the project to generate a coverage report. For best result, couple this with -DCMAKE_BUILD_TYPE=Debug"
+    OFF
+    "SHPXX_BUILD_TESTS"
+    OFF
+)
 
 # Make a directory for outputting reports to
 set(SHPXX_REPORTS_DIR "${CMAKE_BINARY_DIR}/reports")
@@ -48,4 +55,8 @@ add_subdirectory(src)
 
 if(SHPXX_BUILD_TESTS)
     add_subdirectory(tests)
+endif()
+
+if(SHPXX_INSTRUMENT_COVERAGE)
+    include(AddCoverageTarget)
 endif()
