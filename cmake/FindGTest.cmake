@@ -4,6 +4,7 @@ FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG "master"
+    SOURCE_DIR ${PROJECT_BINARY_DIR}/_deps/googletest-src
 )
 
 FetchContent_GetProperties(googletest)
