@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
     shpxx
-    VERSION 0
+    VERSION 0.0.0
     DESCRIPTION "A modern C++ wrapper for shapelib"
     LANGUAGES CXX
 )

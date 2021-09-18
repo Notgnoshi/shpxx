@@ -1,0 +1,13 @@
+#include "shpxx/version.hpp"
+
+namespace shpxx {
+
+const std::size_t version_t::major = @SHPXX_VERSION_MAJOR@;
+const std::size_t version_t::minor = @SHPXX_VERSION_MINOR@;
+const std::size_t version_t::patch = @SHPXX_VERSION_PATCH@;
+
+const std::string version_t::version_str = "@SHPXX_VERSION_STR@";
+const std::string version_t::git_hash = "@SHPXX_GIT_HASH@";
+const std::string version_t::build_timestamp = "@SHPXX_BUILD_TIMESTAMP@";
+
+}  // namespace shpxx
