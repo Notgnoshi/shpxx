@@ -47,7 +47,11 @@ if(NOT GCOV_PATH)
     find_program(GCOV_PATH "${GCOV_NAME}" DOC "gcov executable path")
 
     if(GCOV_PATH)
-        set(GCOV_COMMAND "${GCOV_PATH} ${GCOV_ARGS}")
+        set(GCOV_COMMAND
+            "${GCOV_PATH} ${GCOV_ARGS}"
+            CACHE STRING "Command to use when running gcov"
+        )
+        mark_as_advanced(GCOV_COMMAND)
     endif()
 
     message(DEBUG "${GCOV_NAME} command: ${GCOV_COMMAND}")
