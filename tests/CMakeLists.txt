@@ -28,3 +28,10 @@ add_custom_target(
     COMMENT "Running unit tests..."
     USES_TERMINAL
 )
+
+# Generic target 'make check', but only if this is the root project and therefore these won't
+# conflict with other projects
+if(SHPXX_IS_ROOT_PROJECT)
+    add_custom_target(check)
+    add_dependencies(check run-shpxx-tests)
+endif()
