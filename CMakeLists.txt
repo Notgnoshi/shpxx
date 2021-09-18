@@ -12,6 +12,7 @@ project(
     DESCRIPTION "A modern C++ wrapper for shapelib"
     LANGUAGES CXX
 )
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Default BUILD_SHARED_LIBS to off so that subprojects don't get to be the first place this is
 # defined
