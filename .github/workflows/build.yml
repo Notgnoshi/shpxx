@@ -34,6 +34,37 @@ jobs:
           cd build
           make coverage
 
+      - name: Trim Report File Paths
+        run: |
+          sed "s|$PWD/||g" -i build/reports/shpxx-coverage.xml
+
+      - name: Extract Coverage Percentage
+        run: |
+          RATE=$(grep -o -m 1 -P '(?<=line-rate=").*?(?=")' ./build/reports/shpxx-coverage.xml | head -1)
+          PERCENT="$(echo "($RATE * 100)/1" | bc)"
+
+          BADGE_COLOR=red
+          if [ $PERCENT -ge 60 ]; then BADGE_COLOR=orange; fi
+          if [ $PERCENT -ge 80 ]; then BADGE_COLOR=yellow; fi
+          if [ $PERCENT -ge 95 ]; then BADGE_COLOR=brightgreen; fi
+
+          echo "$RATE -> $PERCENT : $BADGE_COLOR"
+
+          echo "COVERAGE_PERCENT=$PERCENT" >> $GITHUB_ENV
+          echo "COVERAGE_COLOR=$BADGE_COLOR" >> $GITHUB_ENV
+
+
+      - name: Create Coverage Badge
+        uses: schneegans/dynamic-badges-action@v1.1.0
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
+          gistID: 56c30a4341e1e10532203e9ed00d12ce
+          filename: shpxx-coverage-badge.json
+          label: Coverage
+          message: ${{ env.COVERAGE_PERCENT }}
+          color: ${{ env.COVERAGE_COLOR }}
+
       - name: Coverage Summary
         uses: 5monkeys/cobertura-action@master
         if: github.event_name == 'pull_request'
