@@ -93,3 +93,7 @@ endif()
 if(SHPXX_BUILD_DOCS)
     add_subdirectory(docs)
 endif()
+
+if(SHPXX_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
