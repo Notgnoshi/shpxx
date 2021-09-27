@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: sudo apt install cmake doxygen graphviz
+        run: sudo apt install cmake doxygen graphviz libboost-program-options-dev
       - name: Build Doxygen documentation
         run: |
           mkdir build && cd build
