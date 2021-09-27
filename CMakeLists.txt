@@ -55,6 +55,8 @@ cmake_dependent_option(
     OFF
 )
 
+option(SHPXX_BUILD_EXAMPLES "Build project examples" ${SHPXX_IS_ROOT_PROJECT})
+
 # Make a directory for outputting reports to
 set(SHPXX_REPORTS_DIR "${CMAKE_BINARY_DIR}/reports")
 file(MAKE_DIRECTORY "${SHPXX_REPORTS_DIR}")
@@ -71,4 +73,8 @@ endif()
 
 if(SHPXX_BUILD_DOCS)
     add_subdirectory(docs)
+endif()
+
+if(SHPXX_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
