@@ -1,5 +1,6 @@
 # Project/IDE Directories
 build/
+data/
 
 # Prerequisites
 *.d
