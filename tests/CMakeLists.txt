@@ -11,7 +11,7 @@ file(
 
 include(ThirdPartyTargetLinkLibraries)
 
-target_sources(shpxx-tests PRIVATE ${SHPXX_TEST_SOURCES})
+target_sources(shpxx-tests PRIVATE "${SHPXX_TEST_SOURCES}")
 target_link_libraries(shpxx-tests PRIVATE shpxx)
 third_party_target_link_libraries(shpxx-tests PRIVATE GTest::gtest_main)
 
@@ -24,8 +24,8 @@ endif()
 add_custom_target(
     run-shpxx-tests
     ${CHECK_ALL_ARG}
-    COMMAND $<TARGET_FILE:shpxx-tests> --gtest_output=xml:${SHPXX_REPORTS_DIR}/shpxx-tests.xml
-    BYPRODUCTS ${SHPXX_REPORTS_DIR}/shpxx-tests.xml
+    COMMAND "$<TARGET_FILE:shpxx-tests>" --gtest_output=xml:"${SHPXX_REPORTS_DIR}/shpxx-tests.xml"
+    BYPRODUCTS "${SHPXX_REPORTS_DIR}/shpxx-tests.xml"
     COMMENT "Running unit tests..."
     USES_TERMINAL
 )
