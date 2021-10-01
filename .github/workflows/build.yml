@@ -15,7 +15,12 @@ jobs:
       - name: Build library
         run: |
           mkdir build && cd build
-          cmake -DSHPXX_BUILD_DOCS=OFF -DSHPXX_AUTORUN_TESTS=OFF -DSHPXX_INSTRUMENT_COVERAGE=ON ..
+          cmake -DCMAKE_CXX_COMPILER=g++-10 \
+                -DCMAKE_C_COMPILER=gcc-10 \
+                -DSHPXX_BUILD_DOCS=OFF \
+                -DSHPXX_AUTORUN_TESTS=OFF \
+                -DSHPXX_INSTRUMENT_COVERAGE=ON \
+                ..
           make shpxx shpxx-tests -j $(nproc)
 
       - name: Run Tests
