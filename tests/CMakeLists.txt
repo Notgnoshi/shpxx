@@ -12,8 +12,10 @@ file(
 include(ThirdPartyTargetLinkLibraries)
 
 target_sources(shpxx-tests PRIVATE "${SHPXX_TEST_SOURCES}")
+target_include_directories(shpxx-tests PRIVATE "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(shpxx-tests PRIVATE shpxx)
 third_party_target_link_libraries(shpxx-tests PRIVATE GTest::gtest_main)
+target_compile_features(shpxx-tests PRIVATE cxx_std_20)
 
 # Add 'ALL' to add_custom_target arguments below if autorun mode is enabled (otherwise the
 # CHECK_ALL_ARG variable defaults to empty string)
@@ -27,6 +29,7 @@ add_custom_target(
     COMMAND "$<TARGET_FILE:shpxx-tests>" --gtest_output=xml:"${SHPXX_REPORTS_DIR}/shpxx-tests.xml"
     BYPRODUCTS "${SHPXX_REPORTS_DIR}/shpxx-tests.xml"
     COMMENT "Running unit tests..."
+    WORKING_DIRECTORY "$<TARGET_FILE_DIR:shpxx-tests>"
     USES_TERMINAL
 )
 
