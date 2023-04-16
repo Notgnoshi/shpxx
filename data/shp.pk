@@ -1,0 +1,216 @@
+load "common.pk";
+
+type ShpRecordHeader = struct {
+    big uint32 id; // begins at 1
+    // This length doesn't include this ShpRecordHeader prefix for the record content.
+    big uint32 length; // in 16-bit words
+
+    computed uint64 content_length_bytes;
+    method get_content_length_bytes = uint64:
+    {
+        return length * 2;
+    }
+};
+
+type ShpNull = struct {
+    ShpRecordHeader header;
+    struct {
+        little ShpType shape_type;
+    } content;
+};
+
+type ShpPoint = struct {
+    Float64 x;
+    Float64 y;
+};
+
+// NOTE: For each of the shape types, it's valid to specify, say PointZ, but then specify the
+// record size as smaller than the maximum, and not provide the M coordinate. The 3dpoints.shp
+// example file is like this. So you can't key off of _just_ the shape_type. You _have_ to also
+// look at whether there's enough space to read the Z or M coordinates.
+type ShpPointRecord = struct {
+    ShpRecordHeader header;
+    little ShpType shape_type;
+    var not_null = shape_type != 0;
+    if (not_null)
+        struct {
+            ShpPoint point;
+
+            var base_size = 4 + 16;
+            var is_xyz = shape_type == 11 && header.content_length_bytes >= base_size + 8;
+            var is_xyzm = shape_type == 11 && header.content_length_bytes >= base_size + 16;
+            var is_xym = shape_type == 21 && header.content_length_bytes >= base_size + 8;
+
+            if (is_xyz)
+                Float64 z;
+
+            if (is_xyzm || is_xym)
+                Float64 m;
+        } content;
+};
+
+type ShpBoundingBox = struct {
+    Float64 x_min;
+    Float64 y_min;
+    Float64 x_max;
+    Float64 y_max;
+};
+
+type ShpMultiPoint = struct {
+    ShpRecordHeader header;
+    little ShpType shape_type;
+    var not_null = shape_type != 0;
+    if (not_null)
+        struct {
+            ShpBoundingBox bounding_box;
+            little uint32 num_points;
+            ShpPoint[num_points] points;
+
+            var base_size = 4 + 64 + 4 + 16 * num_points;
+            var optional_range_size = 8 + 8 + 8 * num_points;
+            var is_xyz = shape_type == 18 && header.content_length_bytes >= base_size + optional_range_size;
+            var is_xyzm = shape_type == 18 && header.content_length_bytes >= base_size + 2 * optional_range_size;
+            var is_xym = shape_type == 28 && header.content_length_bytes >= base_size + optional_range_size;
+
+            if (is_xyz)
+                Float64 z_min;
+            if (is_xyz)
+                Float64 z_max;
+            if (is_xyz)
+                Float64[num_points] z_values;
+
+            if (is_xyzm || is_xym)
+                Float64 m_min;
+            if (is_xyzm || is_xym)
+                Float64 m_max;
+            if (is_xyzm || is_xym)
+                Float64[num_points] m_values;
+        } content;
+};
+
+type ShpPolyline = struct {
+    ShpRecordHeader header;
+    little ShpType shape_type;
+    var not_null = shape_type != 0;
+    if (not_null)
+        struct {
+            ShpBoundingBox bounding_box;
+            little uint32 num_parts;
+            little uint32 num_points;
+            little uint32[num_parts] parts;
+            ShpPoint[num_points] points;
+
+            var base_size = 4 + 64 + 4 + 4 + 4 * num_parts + 16 * num_points;
+            var optional_range_size = 8 + 8 + 8 * num_points;
+            var is_xyz = shape_type == 13 && header.content_length_bytes >= base_size + optional_range_size;
+            var is_xyzm = shape_type == 13 && header.content_length_bytes >= base_size + 2 * optional_range_size;
+            var is_xym = shape_type == 23 && header.content_length_bytes >= base_size + optional_range_size;
+
+            if (is_xyz)
+                Float64 z_min;
+            if (is_xyz)
+                Float64 z_max;
+            if (is_xyz)
+                Float64[num_points] z_values;
+
+            if (is_xyzm || is_xym)
+                Float64 m_min;
+            if (is_xyzm || is_xym)
+                Float64 m_max;
+            if (is_xyzm || is_xym)
+                Float64[num_points] m_values;
+        } content;
+};
+
+type ShpPolygon = struct {
+    ShpRecordHeader header;
+    little ShpType shape_type;
+    var not_null = shape_type != 0;
+    if (not_null)
+        struct {
+            ShpBoundingBox bounding_box;
+            little uint32 num_parts;
+            little uint32 num_points;
+            little uint32[num_parts] parts;
+            ShpPoint[num_points] points;
+
+            var base_size = 4 + 64 + 4 + 4 + 4 * num_parts + 16 * num_points;
+            var optional_range_size = 8 + 8 + 8 * num_points;
+            var is_xyz = shape_type == 13 && header.content_length_bytes >= base_size + optional_range_size;
+            var is_xyzm = shape_type == 13 && header.content_length_bytes >= base_size + 2 * optional_range_size;
+            var is_xym = shape_type == 23 && header.content_length_bytes >= base_size + optional_range_size;
+
+            if (is_xyz)
+                Float64 z_min;
+            if (is_xyz)
+                Float64 z_max;
+            if (is_xyz)
+                Float64[num_points] z_values;
+
+            if (is_xyzm || is_xym)
+                Float64 m_min;
+            if (is_xyzm || is_xym)
+                Float64 m_max;
+            if (is_xyzm || is_xym)
+                Float64[num_points] m_values;
+        } content;
+};
+
+// 0 = triangle strip
+// 1 = triangle fan
+// 2 = outer ring
+// 3 = inner ring
+// 4 = first ring
+// 5 = ring
+type ShpPartType = uint32;
+
+type ShpMultiPatch = struct {
+    ShpRecordHeader header;
+    little ShpType shape_type;
+    var not_null = shape_type != 0;
+    if (not_null)
+        struct {
+            ShpBoundingBox bounding_box;
+            little uint32 num_parts;
+            little uint32 num_points;
+            little uint32[num_parts] parts;
+            little ShpPartType[num_parts] part_types;
+            ShpPoint[num_points] points;
+
+            var base_size = 4 + 64 + 4 + 4 + 4 * num_parts + 4 * num_parts + 16 * num_points;
+            var optional_range_size = 8 + 8 + 8 * num_points;
+            var is_xyz = shape_type == 13 && header.content_length_bytes >= base_size + optional_range_size;
+            var is_xyzm = shape_type == 13 && header.content_length_bytes >= base_size + 2 * optional_range_size;
+            var is_xym = shape_type == 23 && header.content_length_bytes >= base_size + optional_range_size;
+
+            if (is_xyz)
+                Float64 z_min;
+            if (is_xyz)
+                Float64 z_max;
+            if (is_xyz)
+                Float64[num_points] z_values;
+
+            if (is_xyzm || is_xym)
+                Float64 m_min;
+            if (is_xyzm || is_xym)
+                Float64 m_max;
+            if (is_xyzm || is_xym)
+                Float64[num_points] m_values;
+        } content;
+};
+
+type ShpFile = struct {
+    ShpFileHeader file_header;
+    if (file_header.shape_type == 0)
+        ShpNull[] nulls;
+    if (file_header.shape_type == 1 || file_header.shape_type == 11 || file_header.shape_type == 21)
+        ShpPointRecord[] points;
+    if (file_header.shape_type == 3 || file_header.shape_type == 13 || file_header.shape_type == 23)
+        ShpPolyline[] polylines;
+    if (file_header.shape_type == 5 || file_header.shape_type == 15 || file_header.shape_type == 25)
+        ShpPolygon[] polygons;
+    if (file_header.shape_type == 8 || file_header.shape_type == 18 || file_header.shape_type == 28)
+        ShpMultiPoint[] multipoints;
+    if (file_header.shape_type == 31)
+        ShpMultiPatch multipatches;
+};
