@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG "master"
+    GIT_TAG "v1.13.0"
     SOURCE_DIR ${PROJECT_BINARY_DIR}/_deps/googletest-src
 )
 
