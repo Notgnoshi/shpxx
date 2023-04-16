@@ -1,0 +1,21 @@
+load "common.pk";
+
+type ShxRecord = struct {
+    big uint32 offset; // in 16-bit words
+    computed uint64 offset_bytes;
+    method get_offset_bytes = uint64:
+    {
+        return offset * 2;
+    }
+    big uint32 length; // in 16-bit words
+    computed uint64 length_bytes;
+    method get_length_bytes = uint64:
+    {
+        return length * 2;
+    }
+};
+
+type ShxFile = struct {
+    ShpFileHeader file_header;
+    ShxRecord[] records;
+};
