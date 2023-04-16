@@ -15,5 +15,7 @@ namespace shpxx::io::file {
 //! @param[in] mode Mode to open the file in
 //!
 //! @return A shpfile_t handle to the file
+//!
+//! @throw shpxx::invalid_file_error_t If opening the file fails
 shpxx::shpfile_t open_shp(const std::string& file_path, shpxx::io::openmode mode);
 }  // namespace shpxx::io::file
