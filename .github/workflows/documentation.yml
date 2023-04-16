@@ -7,11 +7,11 @@ on:
 
 jobs:
   build-and-deploy-docs:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: sudo apt install cmake doxygen graphviz
       - name: Build Doxygen documentation
