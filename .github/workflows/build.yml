@@ -29,7 +29,7 @@ jobs:
           make check
 
       - name: Add Test Report PR Annotations
-        uses: mikepenz/action-junit-report@v2
+        uses: mikepenz/action-junit-report@v3
         if: github.event_name == 'pull_request'
         with:
           report_paths: 'build/reports/shpxx-tests.xml'
@@ -47,20 +47,11 @@ jobs:
         run: |
           RATE=$(grep -o -m 1 -P '(?<=line-rate=").*?(?=")' ./build/reports/shpxx-coverage.xml | head -1)
           PERCENT="$(echo "($RATE * 100)/1" | bc)"
-
-          BADGE_COLOR=red
-          if [ $PERCENT -ge 60 ]; then BADGE_COLOR=orange; fi
-          if [ $PERCENT -ge 80 ]; then BADGE_COLOR=yellow; fi
-          if [ $PERCENT -ge 95 ]; then BADGE_COLOR=brightgreen; fi
-
-          echo "$RATE -> $PERCENT : $BADGE_COLOR"
-
+          echo "COVERAGE_PERCENT=$PERCENT"
           echo "COVERAGE_PERCENT=$PERCENT" >> $GITHUB_ENV
-          echo "COVERAGE_COLOR=$BADGE_COLOR" >> $GITHUB_ENV
-
 
       - name: Create Coverage Badge
-        uses: schneegans/dynamic-badges-action@v1.1.0
+        uses: schneegans/dynamic-badges-action@v1.6.0
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
@@ -68,7 +59,9 @@ jobs:
           filename: shpxx-coverage-badge.json
           label: Coverage
           message: ${{ env.COVERAGE_PERCENT }}
-          color: ${{ env.COVERAGE_COLOR }}
+          valColorRange: ${{ env.COVERAGE_PERCENT }}
+          minColorRange: 60
+          maxColorRange: 95
 
       - name: Coverage Summary
         uses: 5monkeys/cobertura-action@master
@@ -76,7 +69,9 @@ jobs:
         with:
           path: 'build/reports/shpxx-coverage.xml'
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          only_changed_files: true
           show_line: true
           show_branch: true
           skip_covered: false
           minimum_coverage: 0
+          fail_below_threshold: false
