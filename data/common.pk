@@ -1,0 +1,49 @@
+// 0 = null
+// 1 = point
+// 3 = polyline
+// 5 = polygon
+// 8 = multipoint
+// 11 = point z
+// 13 = polyline z
+// 15 = polygon z
+// 18 = multipoint z
+// 21 = point m
+// 23 = polyline m
+// 25 = polygon m
+// 28 = multipoint m
+// 31 = multipatch
+type ShpType = uint32;
+
+type ShpFileHeader = struct {
+    big uint32 file_code;
+
+    big uint32 reserved1 == 0;
+    big uint32 reserved2 == 0;
+    big uint32 reserved3 == 0;
+    big uint32 reserved4 == 0;
+    big uint32 reserved5 == 0;
+
+    big uint32 file_length; // in 16-bit words
+    computed uint64 file_length_bytes;
+    method get_file_length_bytes = uint64:
+    {
+        return file_length * 2;
+    }
+
+    uint32 version;
+    ShpType shape_type;
+
+    struct {
+        Float64 x_min;
+        Float64 y_min;
+
+        Float64 x_max;
+        Float64 y_max;
+
+        Float64 z_min;
+        Float64 z_max;
+
+        Float64 m_min;
+        Float64 m_max;
+    } bounding_box;
+};
