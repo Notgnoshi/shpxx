@@ -30,10 +30,7 @@ bool file_handler_t::close(handle_t handle)
     return true;
 }
 
-int file_handler_t::remove(std::string_view filename)
-{
-    return std::remove(filename.data());
-}
+int file_handler_t::remove(std::string_view filename) { return std::remove(filename.data()); }
 
 offset_t file_handler_t::read(handle_t handle, uint8_t* buffer, offset_t length)
 {
