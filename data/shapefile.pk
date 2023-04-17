@@ -5,3 +5,4 @@ load ieee754;
 load "common.pk";
 load "shx.pk";
 load "shp.pk";
+load "dbf.pk";

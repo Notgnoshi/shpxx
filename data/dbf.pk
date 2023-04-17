@@ -1,0 +1,44 @@
+// Level 7: https://www.dbase.com/Knowledgebase/INT/db7_file_fmt.htm
+// Level 3: https://web.archive.org/web/20150323061445/http://ulisse.elettra.trieste.it/services/doc/dbase/DBFstruct.htm
+
+type DbfFieldDescriptor = struct {
+    char[11] field_name;
+    char field_type;
+    uint32 field_data_address;
+    uint8 field_length;
+    uint8 field_decimal_count;
+    uint16 reserved1;
+    uint8 workd_area_id;
+    uint16 reserved2;
+    uint8 set_fields_flag;
+    uint8 reserved3;
+};
+
+type DbfFileHeader = struct {
+    uint8 version: version == 0x03 || version == 0x83;
+    uint8 date_yy;
+    computed uint16 date_real_year;
+    method get_date_real_year = uint16:
+    {
+        return 1900 + date_yy;
+    }
+    uint8 date_mm;
+    uint8 date_dd;
+
+    uint32 num_records;
+    uint16 header_size;
+    uint16 record_size;
+
+    uint8[3] reserved1;
+    uint8[13] reserved2;
+    uint8[4] reserved3;
+
+    // shapelib calculates the number of fields like this:
+    //      const int nFields = (nHeadLen - XBASE_FILEHDR_SZ) / XBASE_FLDHDR_SZ;
+    // but then later on, it aborts reading the fields if it encounters the magic 0x0D terminator
+    // byte.
+    var num_fields = (header_size - 32) / 32;
+    DbfFieldDescriptor[num_fields] field_descriptor;
+
+};
+
