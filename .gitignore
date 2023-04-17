@@ -1,5 +1,6 @@
 # Project/IDE Directories
 build/
+data/shape_eg_data*
 
 # Prerequisites
 *.d
