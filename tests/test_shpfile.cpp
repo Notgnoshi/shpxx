@@ -16,7 +16,7 @@ TEST(ShpfileOpenTestData, Linestring)
     ASSERT_EQ(shapefile.size(), 1);
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::linestring);
 
-    // const auto feature = shapefile.at<shpxx::feature::linestring_t>(0);
+    const auto feature = shapefile.at<shpxx::feature::linestring_t>(0);
     EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::point_t>(0)),
                  shpxx::incompatible_feature_type_error_t);
 }
@@ -28,7 +28,7 @@ TEST(ShpfileOpenTestData, MultiPointZ)
     ASSERT_EQ(shapefile.size(), 3);
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::multi_point_z);
 
-    // const auto feature = shapefile.at<shpxx::feature::multi_point_t>(0);
+    const auto feature = shapefile.at<shpxx::feature::multi_point_t>(0);
     EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::point_t>(0)),
                  shpxx::incompatible_feature_type_error_t);
 }
@@ -41,8 +41,8 @@ TEST(ShpfileOpenTestData, Point)
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::point);
 
     const auto feature = shapefile.at<shpxx::feature::point_t>(0);
-    // EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::linestring_t>(0)),
-    //              shpxx::incompatible_feature_type_error_t);
+    EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::linestring_t>(0)),
+                 shpxx::incompatible_feature_type_error_t);
 }
 
 TEST(ShpfileOpenTestData, PointM)
@@ -52,7 +52,7 @@ TEST(ShpfileOpenTestData, PointM)
     ASSERT_EQ(shapefile.size(), 2);
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::point_m);
 
-    // const auto feature = shapefile.at<shpxx::feature::linestring_t>(0);
+    const auto feature = shapefile.at<shpxx::feature::point_t>(0);
     EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::linestring_t>(0)),
                  shpxx::incompatible_feature_type_error_t);
 }
@@ -65,8 +65,8 @@ TEST(ShpfileOpenTestData, PointZ)
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::point_z);
 
     const auto feature = shapefile.at<shpxx::feature::point_t>(0);
-    // EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::linestring_t>(0)),
-    //              shpxx::incompatible_feature_type_error_t);
+    EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::linestring_t>(0)),
+                 shpxx::incompatible_feature_type_error_t);
 }
 
 TEST(ShpfileOpenTestData, Polygon)
@@ -76,7 +76,7 @@ TEST(ShpfileOpenTestData, Polygon)
     ASSERT_EQ(shapefile.size(), 3);
     EXPECT_EQ(shapefile.type(), shpxx::shape_type::polygon);
 
-    // const auto feature = shapefile.at<shpxx::feature::polygon_t>(0);
+    const auto feature = shapefile.at<shpxx::feature::polygon_t>(0);
     EXPECT_THROW(SHPXX_UNUSED(shapefile.at<shpxx::feature::point_t>(0)),
                  shpxx::incompatible_feature_type_error_t);
 }
