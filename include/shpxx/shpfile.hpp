@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shpxx/concepts/has_class_name.hpp"
 #include "shpxx/concepts/has_compatibility_check.hpp"
 #include "shpxx/concepts/is_feature.hpp"
 #include "shpxx/geometry/point.hpp"
@@ -188,6 +189,7 @@ class shpfile_t
     //! @brief Throw incompatible_feature_type_error_t if the template type is
     //! not compatible with this file
     template<shpxx::concepts::HasCompatibilityCheck CompatibilityCheckT>
+        requires shpxx::concepts::HasClassName<CompatibilityCheckT>
     void throw_if_incompatible() const;
 };
 }  // namespace shpxx

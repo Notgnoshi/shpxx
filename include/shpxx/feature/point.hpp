@@ -10,5 +10,6 @@ class point_t
     explicit point_t(shplib::opaque_object_t);
 
     [[nodiscard]] static bool is_compatible(shape_type t) noexcept;
+    [[nodiscard]] static std::string class_name() noexcept { return "shpxx::feature::point_t"; }
 };
 }  // namespace shpxx::feature
