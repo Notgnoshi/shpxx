@@ -3,7 +3,7 @@
 #include "shpxx/concepts/has_class_name.hpp"
 #include "shpxx/concepts/has_compatibility_check.hpp"
 #include "shpxx/concepts/is_feature.hpp"
-#include "shpxx/geometry/point.hpp"
+#include "shpxx/coordinate.hpp"
 #include "shpxx/shape_type.hpp"
 #include "shpxx/shp_handle.hpp"
 
@@ -95,7 +95,7 @@ class shpfile_t
     //!
     //! @return A point_m_t containing the minimum bound values. The values of
     //! z and m should be 0 when they are unused, but this is not guaranteed.
-    [[nodiscard]] geometry::point_xyzm_t min_bound() const noexcept;
+    [[nodiscard]] shpxx::coordinate_xyzm_t min_bound() const noexcept;
 
     //! @brief Maximum x, y, z, m values of the file
     //!
@@ -104,7 +104,7 @@ class shpfile_t
     //!
     //! @return A point_xyzm_t containing the minimum bound values. The values of
     //! z and m should be 0 when they are unused, but this is not guaranteed.
-    [[nodiscard]] geometry::point_xyzm_t max_bound() const noexcept;
+    [[nodiscard]] shpxx::coordinate_xyzm_t max_bound() const noexcept;
 
     //! @brief Create an read-only iterator pointing to the beginning of the
     //! file
@@ -174,8 +174,8 @@ class shpfile_t
 
     std::size_t m_num_shapes = 0;
     shape_type m_shape_type = shape_type::null;
-    geometry::point_xyzm_t m_min_bound = {};
-    geometry::point_xyzm_t m_max_bound = {};
+    shpxx::coordinate_xyzm_t m_min_bound = {};
+    shpxx::coordinate_xyzm_t m_max_bound = {};
 
     //! @brief Read the object at a specific index
     //!
