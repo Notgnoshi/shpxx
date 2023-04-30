@@ -4,10 +4,10 @@
 #include "shpxx/shp_handle.hpp"
 
 namespace shpxx::feature {
-class arc_t
+class linestring_t
 {
   public:
-    explicit arc_t(shplib::opaque_object_t);
+    explicit linestring_t(shplib::opaque_object_t);
 
     [[nodiscard]] static bool is_compatible(shape_type t) noexcept;
 };

@@ -9,15 +9,15 @@ enum class shape_type
 {
     null = 0,
     point = 1,
-    arc = 3,
+    linestring = 3,
     polygon = 5,
     multi_point = 8,
     point_z = 11,
-    arc_z = 13,
+    linestring_z = 13,
     polygon_z = 15,
     multi_point_z = 18,
     point_m = 21,
-    arc_m = 23,
+    linestring_m = 23,
     polygon_m = 25,
     multi_point_m = 28,
     multi_patch = 31
