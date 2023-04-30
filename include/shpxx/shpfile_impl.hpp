@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shpxx/concepts/has_class_name.hpp"
 #include "shpxx/exceptions.hpp"
 #include "shpxx/shape_type.hpp"
 #include "shpxx/shp_handle.hpp"
@@ -53,12 +54,14 @@ auto shpfile_t::at(std::size_t index) const -> std::optional<FeatureT>
 }
 
 template<shpxx::concepts::HasCompatibilityCheck CompatibilityCheckT>
+    requires shpxx::concepts::HasClassName<CompatibilityCheckT>
 void shpfile_t::throw_if_incompatible() const
 {
     if (!CompatibilityCheckT::is_compatible(type()))
     {
         throw incompatible_feature_type_error_t(
-            "specified feature type is not compatible with file");
+            "specified feature type " + CompatibilityCheckT::class_name() +
+            " is not compatible with file containing type " + to_string(type()));
     }
 }
 

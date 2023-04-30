@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace shpxx {
 //! @brief Enumeration of types of shapes that can be in a file
 //!
@@ -22,4 +24,6 @@ enum class shape_type
     multi_point_m = 28,
     multi_patch = 31
 };
+
+std::string to_string(shape_type type) noexcept;
 }  // namespace shpxx

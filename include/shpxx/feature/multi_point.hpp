@@ -10,5 +10,9 @@ class multi_point_t
     explicit multi_point_t(shplib::opaque_object_t);
 
     [[nodiscard]] static bool is_compatible(shape_type t) noexcept;
+    [[nodiscard]] static std::string class_name() noexcept
+    {
+        return "shpxx::feature::multi_point_t";
+    }
 };
 }  // namespace shpxx::feature

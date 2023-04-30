@@ -10,5 +10,9 @@ class linestring_t
     explicit linestring_t(shplib::opaque_object_t);
 
     [[nodiscard]] static bool is_compatible(shape_type t) noexcept;
+    [[nodiscard]] static std::string class_name() noexcept
+    {
+        return "shpxx::feature::linestring_t";
+    }
 };
 }  // namespace shpxx::feature
