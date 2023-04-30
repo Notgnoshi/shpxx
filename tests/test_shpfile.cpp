@@ -267,4 +267,19 @@ TEST(ShpfileOpenTestData, Polygon)
         }
     }
 
+    {
+        const std::vector<std::optional<shpxx::feature::polygon_t>> polygons{
+            std::make_move_iterator(shapefile.begin<shpxx::feature::polygon_t>()),
+            std::make_move_iterator(shapefile.end<shpxx::feature::polygon_t>())};
+
+        ASSERT_EQ(polygons.size(), shapefile.size());
+        EXPECT_EQ(polygons[0]->num_points(),
+                  shapefile.at<shpxx::feature::polygon_t>(0)->num_points());
+
+        EXPECT_EQ(polygons[1]->num_points(),
+                  shapefile.at<shpxx::feature::polygon_t>(1)->num_points());
+
+        EXPECT_EQ(polygons[2]->num_points(),
+                  shapefile.at<shpxx::feature::polygon_t>(2)->num_points());
+    }
 }
