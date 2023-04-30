@@ -16,6 +16,7 @@ target_include_directories(shpxx-tests PRIVATE "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(shpxx-tests PRIVATE shpxx)
 third_party_target_link_libraries(shpxx-tests PRIVATE GTest::gtest_main)
 target_compile_features(shpxx-tests PRIVATE cxx_std_20)
+target_compile_definitions(shpxx-tests PRIVATE "SHPXX_TEST_DATA_PATH=${PROJECT_SOURCE_DIR}/data")
 
 # Add 'ALL' to add_custom_target arguments below if autorun mode is enabled (otherwise the
 # CHECK_ALL_ARG variable defaults to empty string)
@@ -36,6 +37,6 @@ add_custom_target(
 # Generic target 'make check', but only if this is the root project and therefore these won't
 # conflict with other projects
 if(SHPXX_IS_ROOT_PROJECT)
-    add_custom_target(check)
+    add_custom_target(check COMMENT "Run the unit tests")
     add_dependencies(check run-shpxx-tests)
 endif()

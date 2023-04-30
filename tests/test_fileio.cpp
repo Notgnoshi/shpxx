@@ -1,5 +1,6 @@
 #include "io/file_handler.hpp"
 #include "io/io_handler_concept.hpp"
+#include "test_data.hpp"
 
 #include <string_view>
 
@@ -71,3 +72,5 @@ TYPED_TEST_P(io_handler_test_t, FileOperations)
 
 REGISTER_TYPED_TEST_SUITE_P(io_handler_test_t, FileOperations);
 INSTANTIATE_TYPED_TEST_SUITE_P(IoHandling, io_handler_test_t, io_handlers);
+
+TEST(TestDataDir, EndsInData) { EXPECT_TRUE(shpxx::testing::data_directory.ends_with("/data")); }

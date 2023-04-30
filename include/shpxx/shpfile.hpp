@@ -28,8 +28,8 @@ class shpfile_t
     {
       public:
         using value_type = std::optional<FeatureT>;
-        using reference = const std::optional<FeatureT>&;
-        using pointer = const std::optional<FeatureT>*;
+        using reference = std::optional<FeatureT>&;
+        using pointer = std::optional<FeatureT>*;
         using difference_type = std::int32_t;
         using iterator_category = std::forward_iterator_tag;
 
@@ -37,6 +37,15 @@ class shpfile_t
         //!
         //! shplib requires that SHX files exist, which means the internal record of
         //! offsets can be built.
+
+        const_feature_iterator_t() noexcept;
+        ~const_feature_iterator_t() noexcept = default;
+
+        const_feature_iterator_t(const const_feature_iterator_t& other) noexcept;
+        const_feature_iterator_t(const_feature_iterator_t&& other) noexcept;
+
+        const_feature_iterator_t& operator=(const const_feature_iterator_t& other) noexcept;
+        const_feature_iterator_t& operator=(const_feature_iterator_t&& other) noexcept;
 
         reference operator*() const noexcept;
         pointer operator->() const noexcept;
@@ -48,13 +57,20 @@ class shpfile_t
         bool operator!=(const_feature_iterator_t<FeatureT> other) const noexcept;
 
       private:
+        friend shpfile_t;
+
         explicit const_feature_iterator_t(const shpfile_t& file);
         const_feature_iterator_t(const shpfile_t& file, std::size_t index);
 
-        const shpfile_t& m_file;
-        std::size_t m_curr_index;
-        std::optional<FeatureT> m_curr_obj;
+        [[nodiscard]] bool valid() const noexcept;
+
+        const shpfile_t* m_file = nullptr;
+        std::size_t m_curr_index = 0;
+        mutable std::optional<FeatureT> m_curr_obj;
     };
+
+    template<concepts::IsFeature FeatureT>
+    using iterator = const_feature_iterator_t<FeatureT>;
 
     //! @brief Construct a shpfile_t for a specific file handle
     //!
