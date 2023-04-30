@@ -4,6 +4,7 @@
 #include "io/safile_wrapper.hpp"
 #include "shp_casts.hpp"
 #include "shpxx/exceptions.hpp"
+#include "shpxx/shp_handle.hpp"
 
 #include <shapefil.h>
 
@@ -21,6 +22,6 @@ shpxx::shpfile_t open_shp(const std::string& file_path, shpxx::io::openmode mode
         throw shpxx::invalid_file_error_t("Unable to open '" + file_path + "'");
     }
 
-    return shpxx::shpfile_t(shp_handle_t(cast_shp_info(file_handle)));
+    return shpxx::shpfile_t(shplib::opaque_file_t(cast_shp_info(file_handle)));
 }
 }  // namespace shpxx::io::file

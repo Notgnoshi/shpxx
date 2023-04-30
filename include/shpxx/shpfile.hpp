@@ -20,9 +20,12 @@ class shpfile_t
     //! The shpfile_t will take ownership of the file handle and close it when
     //! it is destroyed.
     //!
+    //! @note shpxx users should use one of the functions defined in shpxx::io
+    //! to open a shapefile and obtain a shpfile_t.
+    //!
     //! @param[in] handle Pointer to the handle for the opened file. Must not be
     //! null.
-    explicit shpfile_t(shp_handle_t handle);
+    explicit shpfile_t(shplib::opaque_file_t handle);
     ~shpfile_t() = default;
 
     shpfile_t(const shpfile_t&) = delete;

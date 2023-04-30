@@ -1,6 +1,7 @@
 #include "shpxx/shpfile.hpp"
 
 #include "shp_casts.hpp"
+#include "shpxx/shp_handle.hpp"
 
 #include <shapefil.h>
 
@@ -11,7 +12,7 @@ namespace shpxx {
 //! @brief Convert an array of doubles into a point
 static geometry::point_xyzm_t make_point(const std::array<double, 4>& data);
 
-shpfile_t::shpfile_t(shp_handle_t handle) : m_handle(std::move(handle))
+shpfile_t::shpfile_t(shplib::opaque_file_t handle) : m_handle(std::move(handle))
 {
     assert(m_handle);
 
