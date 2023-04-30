@@ -18,6 +18,43 @@ namespace shpxx {
 class shpfile_t
 {
   public:
+    //! @brief Read-Only iterator for features in a file
+    //!
+    //! Type of the features is defined at the point the shape iterator is created
+    //! from the top-level shape file object.
+    template<shpxx::concepts::IsFeature FeatureT>
+    class const_feature_iterator_t
+    {
+      public:
+        using value_type = std::optional<FeatureT>;
+        using reference = const std::optional<FeatureT>&;
+        using pointer = const std::optional<FeatureT>*;
+        using difference_type = std::int32_t;
+        using iterator_category = std::forward_iterator_tag;
+
+        //! @todo Make this a proper random-access iterator?
+        //!
+        //! shplib requires that SHX files exist, which means the internal record of
+        //! offsets can be built.
+
+        reference operator*() const noexcept;
+        pointer operator->() const noexcept;
+
+        const_feature_iterator_t& operator++() noexcept;
+        const_feature_iterator_t operator++(int) noexcept;
+
+        bool operator==(const_feature_iterator_t<FeatureT> other) const noexcept;
+        bool operator!=(const_feature_iterator_t<FeatureT> other) const noexcept;
+
+      private:
+        explicit const_feature_iterator_t(const shpfile_t& file);
+        const_feature_iterator_t(const shpfile_t& file, std::size_t index);
+
+        const shpfile_t& m_file;
+        std::size_t m_curr_index;
+        std::optional<FeatureT> m_curr_obj;
+    };
+
     //! @brief Construct a shpfile_t for a specific file handle
     //!
     //! The shpfile_t will take ownership of the file handle and close it when
@@ -67,6 +104,49 @@ class shpfile_t
     //! @return A point_xyzm_t containing the minimum bound values. The values of
     //! z and m should be 0 when they are unused, but this is not guaranteed.
     [[nodiscard]] geometry::point_xyzm_t max_bound() const noexcept;
+
+    //! @brief Create an read-only iterator pointing to the beginning of the
+    //! file
+    //!
+    //! @tparam FeatureT The feature type that all data in the file should be
+    //! converted to. This must be compatible with the shape_type returned by
+    //! type()
+    //!
+    //! @throw incompatible_feature_type_error_t if FeatureT is not compatible
+    //! with the type of features indicated by the file header
+    //!
+    //! @return A new feature iterator which can be used to access the features
+    //! of the file as a specific feature type
+    template<shpxx::concepts::IsFeature FeatureT>
+    [[nodiscard]] const_feature_iterator_t<FeatureT> begin() const;
+
+    //! @brief @see begin()
+    template<shpxx::concepts::IsFeature FeatureT>
+    [[nodiscard]] const_feature_iterator_t<FeatureT> cbegin() const
+    {
+        return begin<FeatureT>();
+    }
+
+    //! @brief Create an read-only iterator pointing past-the-end of the file
+    //!
+    //! @tparam FeatureT The feature type that all data in the file should be
+    //! converted to. This must be compatible with the shape_type returned by
+    //! type()
+    //!
+    //! @throw incompatible_feature_type_error_t if FeatureT is not compatible
+    //! with the type of features indicated by the file header
+    //!
+    //! @return A new feature iterator which cannot be dereferenced, but can be
+    //! used as an end iterator for reading through the file
+    template<shpxx::concepts::IsFeature FeatureT>
+    [[nodiscard]] const_feature_iterator_t<FeatureT> end() const;
+
+    //! @brief @see end()
+    template<shpxx::concepts::IsFeature FeatureT>
+    [[nodiscard]] const_feature_iterator_t<FeatureT> cend() const
+    {
+        return end<FeatureT>();
+    }
 
     //! @brief Get the shape at a specific index
     //!
