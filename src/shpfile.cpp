@@ -9,7 +9,7 @@
 
 namespace shpxx {
 //! @brief Convert an array of doubles into a point
-static geometry::point_m_t make_point(const std::array<double, 4>& data);
+static geometry::point_xyzm_t make_point(const std::array<double, 4>& data);
 
 shpfile_t::shpfile_t(shp_handle_t handle) : m_handle(std::move(handle))
 {
@@ -34,12 +34,12 @@ shpfile_t::shpfile_t(shp_handle_t handle) : m_handle(std::move(handle))
 
 std::size_t shpfile_t::size() const noexcept { return m_num_shapes; }
 shape_type shpfile_t::type() const noexcept { return m_shape_type; }
-geometry::point_m_t shpfile_t::min_bound() const noexcept { return m_min_bound; }
-geometry::point_m_t shpfile_t::max_bound() const noexcept { return m_max_bound; }
+geometry::point_xyzm_t shpfile_t::min_bound() const noexcept { return m_min_bound; }
+geometry::point_xyzm_t shpfile_t::max_bound() const noexcept { return m_max_bound; }
 
-geometry::point_m_t make_point(const std::array<double, 4>& data)
+geometry::point_xyzm_t make_point(const std::array<double, 4>& data)
 {
-    geometry::point_m_t point{};
+    geometry::point_xyzm_t point{};
     point.x = data[0];
     point.y = data[1];
     point.z = data[2];
