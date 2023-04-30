@@ -2,28 +2,35 @@
 
 #include <memory>
 
-namespace shpxx {
+//! Namespace for shim operations into shplib that are necessary to use within
+//! the headers of shpxx - any operations performed in source files can be done
+//! by casting these opaque pointers and then using them directly.
+//!
+//! This allows us to avoid including any of shplib in the public headers of
+//! shpxx.
+namespace shpxx::shplib {
 
-//! Shapelib defines an anonymous struct typedef SHPInfo as the struct containing
-//! an opened file's data. Unfortunately, we can't just forward-declare it an
-//! use it as an opaque pointer, because it's a typedef.
+//! Shapelib defines an anonymous struct typedefs as the structs containing
+//! an opened file's data. Unfortunately, we can't just forward-declare those
+//! types and use them as opaque pointers, because they are typedefs.
 //!
 //! https://stackoverflow.com/questions/18501993/struct-forward-declaration-error-typedef-redefinition-with-different-types
 //!
-//! This type exists as a stand-in in the context of this library. The public
-//! API will use pointers of type shp_info, and those will be cast to/from the
-//! appropriate shapelib type in the source code where it is used.
+//! These types exist as stand-ins in the context of this library. The public
+//! API will use pointers of these types, and those will be cast to/from the
+//! appropriate shapelib types in the source code where they are used.
+//!
+//! @{
 struct shp_info;
+//! @}
 
-namespace shp_handle {
-    //! @brief Functor which closes a shpfile
-    struct close_shp_t
-    {
-        void operator()(shp_info*) const;
-    };
+//! @brief Functor which closes a shpfile
+struct close_file_t
+{
+    void operator()(shp_info*) const;
+};
 
-}  // namespace shp_handle
 
-using shp_handle_t = std::unique_ptr<shp_info, shp_handle::close_shp_t>;
+using opaque_file_t = std::unique_ptr<shp_info, close_file_t>;
 
-}  // namespace shpxx
+}  // namespace shpxx::shplib
