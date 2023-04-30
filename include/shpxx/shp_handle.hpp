@@ -22,6 +22,7 @@ namespace shpxx::shplib {
 //!
 //! @{
 struct shp_info;
+struct shp_object;
 //! @}
 
 //! @brief Functor which closes a shpfile
@@ -30,7 +31,13 @@ struct close_file_t
     void operator()(shp_info*) const;
 };
 
+//! @brief Functor destroys an object
+struct destroy_object_t
+{
+    void operator()(shp_object*) const;
+};
 
 using opaque_file_t = std::unique_ptr<shp_info, close_file_t>;
+using opaque_object_t = std::unique_ptr<shp_object, destroy_object_t>;
 
 }  // namespace shpxx::shplib
