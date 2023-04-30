@@ -56,6 +56,9 @@ cmake_dependent_option(
 )
 
 option(SHPXX_BUILD_EXAMPLES "Build project examples" ${SHPXX_IS_ROOT_PROJECT})
+option(SHPXX_INSTRUMENT_ASAN "Instrument the project with address sanitization" OFF)
+option(SHPXX_INSTRUMENT_MSAN "Instrument the project with memory sanitization" OFF)
+option(SHPXX_INSTRUMENT_UBSAN "Instrument the project with undefined behavior sanitization" OFF)
 
 # Make a directory for outputting reports to
 set(SHPXX_REPORTS_DIR "${CMAKE_BINARY_DIR}/reports")
@@ -69,6 +72,20 @@ endif()
 
 if(SHPXX_INSTRUMENT_COVERAGE)
     include(AddCoverageTarget)
+endif()
+if(SHPXX_INSTRUMENT_ASAN)
+    add_compile_options(-g3 -fsanitize=address)
+    add_link_options(-fsanitize=address)
+endif()
+if(SHPXX_INSTRUMENT_MSAN)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_options(-g3 -fsanitize=memory)
+        add_link_options(-fsanitize=memory)
+    endif()
+endif()
+if(SHPXX_INSTRUMENT_UBSAN)
+    add_compile_options(-g3 -fsanitize=undefined)
+    add_link_options(-fsanitize=undefined)
 endif()
 
 if(SHPXX_BUILD_DOCS)
