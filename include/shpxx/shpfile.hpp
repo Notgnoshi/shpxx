@@ -1,10 +1,13 @@
 #pragma once
 
+#include "shpxx/concepts/has_compatibility_check.hpp"
+#include "shpxx/concepts/is_feature.hpp"
 #include "shpxx/geometry/point.hpp"
 #include "shpxx/shape_type.hpp"
 #include "shpxx/shp_handle.hpp"
 
 #include <cstdint>
+#include <optional>
 
 namespace shpxx {
 
@@ -65,12 +68,48 @@ class shpfile_t
     //! z and m should be 0 when they are unused, but this is not guaranteed.
     [[nodiscard]] geometry::point_xyzm_t max_bound() const noexcept;
 
+    //! @brief Get the shape at a specific index
+    //!
+    //! @tparam FeatureT The feature type that the data in the file should be
+    //! converted to. This must be compatible with the shape_type returned by
+    //! type()
+    //!
+    //! @throw incompatible_feature_type_error_t if FeatureT is not compatible
+    //! with the type of features indicated by the file header
+    //!
+    //! @throw std::out_of_range if the index is past the end of the file
+    //!
+    //! @note This currently returns a copy of the feature feature indicated,
+    //! but it may change eventually to return a const& that is valid as long as
+    //! the shpfile_t remains in scope
+    //!
+    //! @return A copy of the feature indicated, or a null option if the shape
+    //! at the given index is null
+    template<shpxx::concepts::IsFeature FeatureT>
+    [[nodiscard]] std::optional<FeatureT> at(std::size_t index) const;
+
   private:
-    shp_handle_t m_handle;
+    shplib::opaque_file_t m_handle;
 
     std::size_t m_num_shapes = 0;
     shape_type m_shape_type = shape_type::null;
     geometry::point_xyzm_t m_min_bound = {};
     geometry::point_xyzm_t m_max_bound = {};
+
+    //! @brief Read the object at a specific index
+    //!
+    //! @param index Index of the object to read
+    //!
+    //! @return The underlying shplib object, or a null option if the feature is
+    //! null
+    [[nodiscard]] std::optional<shplib::opaque_object_t>
+    read_index(std::size_t index) const noexcept;
+
+    //! @brief Throw incompatible_feature_type_error_t if the template type is
+    //! not compatible with this file
+    template<shpxx::concepts::HasCompatibilityCheck CompatibilityCheckT>
+    void throw_if_incompatible() const;
 };
 }  // namespace shpxx
+
+#include "shpxx/shpfile_impl.hpp"
