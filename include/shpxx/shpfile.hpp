@@ -51,23 +51,23 @@ class shpfile_t
     //!
     //! @return A point_m_t containing the minimum bound values. The values of
     //! z and m should be 0 when they are unused, but this is not guaranteed.
-    [[nodiscard]] geometry::point_m_t min_bound() const noexcept;
+    [[nodiscard]] geometry::point_xyzm_t min_bound() const noexcept;
 
     //! @brief Maximum x, y, z, m values of the file
     //!
     //! @note These are the values stored in the file header, and as such may
     //! not accurately reflect the data in the file.
     //!
-    //! @return A point_m_t containing the minimum bound values. The values of
+    //! @return A point_xyzm_t containing the minimum bound values. The values of
     //! z and m should be 0 when they are unused, but this is not guaranteed.
-    [[nodiscard]] geometry::point_m_t max_bound() const noexcept;
+    [[nodiscard]] geometry::point_xyzm_t max_bound() const noexcept;
 
   private:
     shp_handle_t m_handle;
 
     std::size_t m_num_shapes = 0;
     shape_type m_shape_type = shape_type::null;
-    geometry::point_m_t m_min_bound = {};
-    geometry::point_m_t m_max_bound = {};
+    geometry::point_xyzm_t m_min_bound = {};
+    geometry::point_xyzm_t m_max_bound = {};
 };
 }  // namespace shpxx
