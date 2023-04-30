@@ -85,17 +85,17 @@ enum class shape_type
     null,
 
     point,
-    arc,
+    linestring,
     polygon,
     multipoint,
 
     point_m,
-    arc_m,
+    linestring_m,
     polygon_m,
     multipoint_m,
 
     point_z,
-    arc_z,
+    linestring_z,
     polygon_z,
     multipoint_z,
 
@@ -167,7 +167,7 @@ shape_type int2shapet(int shp_type)
     case SHPT_POINT:
         return shape_type::point;
     case SHPT_ARC:
-        return shape_type::arc;
+        return shape_type::linestring;
     case SHPT_POLYGON:
         return shape_type::polygon;
     case SHPT_MULTIPOINT:
@@ -175,7 +175,7 @@ shape_type int2shapet(int shp_type)
     case SHPT_POINTM:
         return shape_type::point_m;
     case SHPT_ARCM:
-        return shape_type::arc_m;
+        return shape_type::linestring_m;
     case SHPT_POLYGONM:
         return shape_type::polygon_m;
     case SHPT_MULTIPOINTM:
@@ -183,7 +183,7 @@ shape_type int2shapet(int shp_type)
     case SHPT_POINTZ:
         return shape_type::point_z;
     case SHPT_ARCZ:
-        return shape_type::arc_z;
+        return shape_type::linestring_z;
     case SHPT_POLYGONZ:
         return shape_type::polygon_z;
     case SHPT_MULTIPOINTZ:
@@ -203,24 +203,24 @@ std::string shapet2str(shape_type type)
         return "null";
     case shape_type::point:
         return "point";
-    case shape_type::arc:
-        return "arc";
+    case shape_type::linestring:
+        return "linestring";
     case shape_type::polygon:
         return "polygon";
     case shape_type::multipoint:
         return "multipoint";
     case shape_type::point_m:
         return "point m";
-    case shape_type::arc_m:
-        return "arc m";
+    case shape_type::linestring_m:
+        return "linestring m";
     case shape_type::polygon_m:
         return "polygon m";
     case shape_type::multipoint_m:
         return "multipoint m";
     case shape_type::point_z:
         return "point z";
-    case shape_type::arc_z:
-        return "arc z";
+    case shape_type::linestring_z:
+        return "linestring z";
     case shape_type::polygon_z:
         return "polygon z";
     case shape_type::multipoint_z:
@@ -553,9 +553,9 @@ void output_wkt_shape(std::ostream& out, const SHPObject* shape, bool has_z, boo
     case shape_type::multipoint_z:
         output_wkt_point(out, shape, has_z, has_m);
         break;
-    case shape_type::arc:
-    case shape_type::arc_m:
-    case shape_type::arc_z:
+    case shape_type::linestring:
+    case shape_type::linestring_m:
+    case shape_type::linestring_z:
         output_wkt_arc(out, shape, has_z, has_m);
         break;
     case shape_type::polygon:
@@ -638,13 +638,13 @@ int main(int argc, const char* argv[])
     {
     case shape_type::point_m:
     case shape_type::multipoint_m:
-    case shape_type::arc_m:
+    case shape_type::linestring_m:
     case shape_type::polygon_m:
         has_m = true;
         break;
 
     case shape_type::point_z:
-    case shape_type::arc_z:
+    case shape_type::linestring_z:
     case shape_type::polygon_z:
     case shape_type::multipoint_z:
         // the measure may, or may not be included in the Z types.
