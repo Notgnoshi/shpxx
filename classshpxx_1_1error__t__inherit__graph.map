@@ -1,0 +1,7 @@
+<map id="shpxx::error_t" name="shpxx::error_t">
+<area shape="rect" id="node1" title="Base type for shpxx errors." alt="" coords="119,155,231,181"/>
+<area shape="rect" id="node4" href="$classshpxx_1_1incompatible__feature__type__error__t.html" title=" " alt="" coords="5,229,168,271"/>
+<area shape="rect" id="node5" href="$classshpxx_1_1invalid__file__error__t.html" title="Indicates that the file data was not readable." alt="" coords="193,229,333,271"/>
+<area shape="rect" id="node2" title=" " alt="" coords="105,80,244,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="117,5,232,32"/>
+</map>
