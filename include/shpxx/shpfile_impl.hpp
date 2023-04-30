@@ -50,7 +50,7 @@ auto shpfile_t::at(std::size_t index) const -> std::optional<FeatureT>
 
     throw_if_incompatible<FeatureT>();
 
-    return FeatureT(*object);
+    return FeatureT(std::move(*object));
 }
 
 template<shpxx::concepts::HasCompatibilityCheck CompatibilityCheckT>
