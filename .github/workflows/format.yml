@@ -6,9 +6,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - uses: DoozyX/clang-format-lint-action@v0.15
+      - uses: DoozyX/clang-format-lint-action@v0.16.1
         with:
-          clangFormatVersion: 14
+          clangFormatVersion: 16
 
   cmake-format:
     runs-on: ubuntu-22.04

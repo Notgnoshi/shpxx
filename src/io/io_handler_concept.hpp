@@ -14,8 +14,7 @@ using offset_t = unsigned long;
 //! @brief Constraint for types which can be wrapped by a SAHooks object for
 //! reading/writing data
 template<class HandlerT>
-concept IoHandler = requires
-{
+concept IoHandler = requires {
     // clang-format does weird things with constraints :/
     // clang-format off
 
