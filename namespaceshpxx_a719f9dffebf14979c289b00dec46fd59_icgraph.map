@@ -1,0 +1,6 @@
+<map id="shpxx::cast_shp_info" name="shpxx::cast_shp_info">
+<area shape="rect" id="node1" title="Cast shpxx::shp_info type to the SHPInfo struct." alt="" coords="240,64,399,91"/>
+<area shape="rect" id="node2" href="$namespaceshpxx_1_1io_1_1file.html#adb0cfc1c29413ec0b58b7efc991e6867" title="Open a shape file." alt="" coords="9,5,188,32"/>
+<area shape="rect" id="node3" href="$structshpxx_1_1shplib_1_1close__file__t.html#a8bb80ce9ed88b1f5d32635ef2d9651cb" title=" " alt="" coords="23,57,174,98"/>
+<area shape="rect" id="node4" href="$classshpxx_1_1shpfile__t.html#af78ae6771dff88bbee06c3ca2daf82f4" title="Construct a shpfile_t for a specific file handle." alt="" coords="5,123,192,149"/>
+</map>

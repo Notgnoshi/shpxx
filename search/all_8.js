@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['incompatible_5ffeature_5ftype_5ferror_5ft_50',['incompatible_feature_type_error_t',['../classshpxx_1_1incompatible__feature__type__error__t.html',1,'shpxx']]],
+  ['inner_5fring_51',['inner_ring',['../shp2csv_8cpp.html#a00d738e6a35795835c670673f40f77e9af1c81ad8f4161e0e73d945250dd0d195',1,'shp2csv.cpp']]],
+  ['input_5ffilename_52',['input_filename',['../structoptions__t.html#af2b19fa34cdfc160a5b6c090751e4578',1,'options_t']]],
+  ['instantiate_5ftyped_5ftest_5fsuite_5fp_53',['INSTANTIATE_TYPED_TEST_SUITE_P',['../test__fileio_8cpp.html#a2eb6811789ebd9921ce1733e23c82bc9',1,'test_fileio.cpp']]],
+  ['int2partt_54',['int2partt',['../shp2csv_8cpp.html#a7164f8430d2d344caecfa66311922185',1,'shp2csv.cpp']]],
+  ['int2shapet_55',['int2shapet',['../shp2csv_8cpp.html#a9e5895e17ae160da071b2b7f33700826',1,'shp2csv.cpp']]],
+  ['invalid_5ffile_5ferror_5ft_56',['invalid_file_error_t',['../classshpxx_1_1invalid__file__error__t.html',1,'shpxx']]],
+  ['io_5fhandler_5fconcept_2ehpp_57',['io_handler_concept.hpp',['../io__handler__concept_8hpp.html',1,'']]],
+  ['io_5fhandler_5ftest_5ft_58',['io_handler_test_t',['../classio__handler__test__t.html',1,'']]],
+  ['io_5fhandlers_59',['io_handlers',['../test__fileio_8cpp.html#aae354d921f133080866f1f7ab8edbfb6',1,'test_fileio.cpp']]],
+  ['iohandler_60',['IoHandler',['../namespaceshpxx_1_1io.html#add346813423fdeb110f4c798144e16ea',1,'shpxx::io']]],
+  ['is_5fcompatible_61',['is_compatible',['../classshpxx_1_1feature_1_1polygon__t.html#a663e9cc6fd566745463889c8003de18d',1,'shpxx::feature::polygon_t::is_compatible()'],['../classshpxx_1_1feature_1_1point__t.html#af11ede698a826253aec4966622790157',1,'shpxx::feature::point_t::is_compatible()'],['../classshpxx_1_1feature_1_1multi__point__t.html#a259be7e6f4fb268f1bad62d83dff4289',1,'shpxx::feature::multi_point_t::is_compatible()'],['../classshpxx_1_1feature_1_1multi__patch__t.html#ae80fd5a79d87155cbdafa86f90f7d333',1,'shpxx::feature::multi_patch_t::is_compatible()'],['../classshpxx_1_1feature_1_1linestring__t.html#aa473b6a1e587ea67192e95749f3efa1d',1,'shpxx::feature::linestring_t::is_compatible()']]],
+  ['is_5fcoordinate_2ehpp_62',['is_coordinate.hpp',['../is__coordinate_8hpp.html',1,'']]],
+  ['is_5ffeature_2ehpp_63',['is_feature.hpp',['../is__feature_8hpp.html',1,'']]],
+  ['is_5fno_5fdata_64',['is_no_data',['../namespaceshpxx.html#acfd8a05eaa61336ffa92738ca23591df',1,'shpxx']]],
+  ['iscoordinate_65',['IsCoordinate',['../namespaceshpxx_1_1concepts.html#ab5f74a9bd4842db6227fbcd64dc7f543',1,'shpxx::concepts']]],
+  ['isfeature_66',['IsFeature',['../namespaceshpxx_1_1concepts.html#a3a9c6df6453ac3b3618fe00201d88f7d',1,'shpxx::concepts']]],
+  ['iterator_5fcategory_67',['iterator_category',['../classshpxx_1_1shpfile__t_1_1const__feature__iterator__t.html#a29444b79e19d7bbeb564164b613c1179',1,'shpxx::shpfile_t::const_feature_iterator_t']]]
+];

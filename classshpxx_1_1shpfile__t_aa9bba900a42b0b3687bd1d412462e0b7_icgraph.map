@@ -1,0 +1,4 @@
+<map id="shpxx::shpfile_t::max_bound" name="shpxx::shpfile_t::max_bound">
+<area shape="rect" id="node1" title="Maximum x, y, z, m values of the file." alt="" coords="240,5,401,47"/>
+<area shape="rect" id="node2" href="$classshpxx_1_1shpfile__t.html#af78ae6771dff88bbee06c3ca2daf82f4" title="Construct a shpfile_t for a specific file handle." alt="" coords="5,13,192,39"/>
+</map>

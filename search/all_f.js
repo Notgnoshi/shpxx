@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['concepts_145',['concepts',['../namespaceshpxx_1_1concepts.html',1,'shpxx']]],
+  ['detail_146',['detail',['../namespaceshpxx_1_1io_1_1detail.html',1,'shpxx::io']]],
+  ['feature_147',['feature',['../namespaceshpxx_1_1feature.html',1,'shpxx']]],
+  ['file_148',['file',['../namespaceshpxx_1_1io_1_1file.html',1,'shpxx::io']]],
+  ['internal_149',['internal',['../namespaceshpxx_1_1internal.html',1,'shpxx']]],
+  ['io_150',['io',['../namespaceshpxx_1_1io.html',1,'shpxx']]],
+  ['safile_5fwrapper_2ehpp_151',['safile_wrapper.hpp',['../safile__wrapper_8hpp.html',1,'']]],
+  ['seek_152',['seek',['../classshpxx_1_1io_1_1file__handler__t.html#a1b3ee22cc59f45557bc0f7f7c465d741',1,'shpxx::io::file_handler_t']]],
+  ['shape_5ftype_153',['shape_type',['../shp2csv_8cpp.html#a82a00e336c65dad4cc04b65563b26eb5',1,'shape_type():&#160;shp2csv.cpp'],['../namespaceshpxx.html#a7f7bc691a971730ad43d5347d40457fa',1,'shpxx::shape_type()']]],
+  ['shape_5ftype_2ecpp_154',['shape_type.cpp',['../shape__type_8cpp.html',1,'']]],
+  ['shape_5ftype_2ehpp_155',['shape_type.hpp',['../shape__type_8hpp.html',1,'']]],
+  ['shapet2str_156',['shapet2str',['../shp2csv_8cpp.html#ae912b30c2b02302584876046675497fb',1,'shp2csv.cpp']]],
+  ['shp2csv_157',['shp2csv',['../md__home_runner_work_shpxx_shpxx_examples_shp2csv_README.html',1,'']]],
+  ['shp2csv_2ecpp_158',['shp2csv.cpp',['../shp2csv_8cpp.html',1,'']]],
+  ['shp_5fcasts_2ehpp_159',['shp_casts.hpp',['../shp__casts_8hpp.html',1,'']]],
+  ['shp_5fhandle_2ecpp_160',['shp_handle.cpp',['../shp__handle_8cpp.html',1,'']]],
+  ['shp_5fhandle_2ehpp_161',['shp_handle.hpp',['../shp__handle_8hpp.html',1,'']]],
+  ['shpfile_2ecpp_162',['shpfile.cpp',['../shpfile_8cpp.html',1,'']]],
+  ['shpfile_2ehpp_163',['shpfile.hpp',['../shpfile_8hpp.html',1,'']]],
+  ['shpfile_5fimpl_2ehpp_164',['shpfile_impl.hpp',['../shpfile__impl_8hpp.html',1,'']]],
+  ['shpfile_5ft_165',['shpfile_t',['../classshpxx_1_1shpfile__t.html#abf0c83353366faa891e290b8ce832d7c',1,'shpxx::shpfile_t::shpfile_t(const shpfile_t &amp;)=delete'],['../classshpxx_1_1shpfile__t.html#a41db297450a623adb42ade134438a4c8',1,'shpxx::shpfile_t::shpfile_t(shpfile_t &amp;&amp;)=default'],['../classshpxx_1_1shpfile__t.html#af78ae6771dff88bbee06c3ca2daf82f4',1,'shpxx::shpfile_t::shpfile_t(shplib::opaque_file_t handle)'],['../classshpxx_1_1shpfile__t.html',1,'shpxx::shpfile_t']]],
+  ['shplib_166',['shplib',['../namespaceshpxx_1_1shplib.html',1,'shpxx']]],
+  ['shpxx_167',['shpxx',['../index.html',1,'(Global Namespace)'],['../namespaceshpxx.html',1,'shpxx']]],
+  ['signed_5farea_168',['signed_area',['../shp2csv_8cpp.html#a736efbb4a472bdf146e4871f8d9e493f',1,'shp2csv.cpp']]],
+  ['size_169',['size',['../classshpxx_1_1shpfile__t.html#a5e2cb33018d0cef0791dc99da8d835e0',1,'shpxx::shpfile_t']]]
+];

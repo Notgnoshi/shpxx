@@ -1,0 +1,5 @@
+<map id="shpxx::io::file::open_shp" name="shpxx::io::file::open_shp">
+<area shape="rect" id="node1" title="Open a shape file." alt="" coords="5,31,184,57"/>
+<area shape="rect" id="node2" href="$namespaceshpxx.html#a719f9dffebf14979c289b00dec46fd59" title="Cast shpxx::shp_info type to the SHPInfo struct." alt="" coords="232,5,391,32"/>
+<area shape="rect" id="node3" href="$namespaceshpxx_1_1io.html#aedeac7ab96928e7bd6ce762fa927b810" title=" " alt="" coords="238,56,385,83"/>
+</map>
