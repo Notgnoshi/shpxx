@@ -1,12 +1,11 @@
 #include <boost/program_options.hpp>
 #include <shapefil.h>
 
-#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <string>
+#include <vector>
 
 bool g_verbose = false;
 
@@ -237,9 +236,9 @@ void output_wkt_point(std::ostream& out, const SHPObject* point, bool has_z, boo
     // Point and MultiPoint records do not use parts; nVertices is 1 for Point and
     // the count of points for MultiPoint. Disambiguate by shape type, not nParts.
     const int shape_vertices = point->nVertices;
-    const bool is_multi = (point->nSHPType == SHPT_MULTIPOINT
-                           || point->nSHPType == SHPT_MULTIPOINTM
-                           || point->nSHPType == SHPT_MULTIPOINTZ);
+    const bool is_multi =
+        (point->nSHPType == SHPT_MULTIPOINT || point->nSHPType == SHPT_MULTIPOINTM ||
+         point->nSHPType == SHPT_MULTIPOINTZ);
 
     if (g_verbose)
     {
@@ -368,6 +367,37 @@ void output_wkt_arc(std::ostream& out, const SHPObject* arc, bool has_z, bool ha
         out << ")";
 }
 
+// Signed area of a closed ring via the translated shoelace formula.
+//
+// Shapefile rings include a closing vertex (x[n-1] == x[0], y[n-1] == y[0]). With standard y-up
+// axes the sign convention is:
+//   negative -> clockwise   -> outer ring per ESRI shapefile spec p. 9
+//   positive -> counter-CW  -> inner ring (hole)
+//
+// Pre-translating by the first vertex shrinks the magnitude of each x*y product before the
+// cross-difference is taken, mitigating catastrophic cancellation for coordinates far from the
+// origin. Mathematically equivalent to the un-translated form. O(nverts), no allocation.
+double signed_area(const double* x, const double* y, int nverts)
+{
+    // A closed ring needs at least 4 stored points (3 distinct + closure).
+    if (nverts < 4)
+        return 0.0;
+    const double x0 = x[0];
+    const double y0 = y[0];
+    // i==0 and i==nverts-1 contribute zero: the former because the offset (x[0]-x0, y[0]-y0) is
+    // zero; the latter because the ring is closed so x[nverts-1] == x[0].
+    double sum = 0.0;
+    for (int i = 1; i < nverts - 1; ++i)
+    {
+        const double dxi = x[i] - x0;
+        const double dyi = y[i] - y0;
+        const double dxj = x[i + 1] - x0;
+        const double dyj = y[i + 1] - y0;
+        sum += dxi * dyj - dxj * dyi;
+    }
+    return 0.5 * sum;
+}
+
 void output_wkt_polygon(std::ostream& out, const SHPObject* polygon, bool has_z, bool has_m)
 {
     const int parts = polygon->nParts;
@@ -378,50 +408,84 @@ void output_wkt_polygon(std::ostream& out, const SHPObject* polygon, bool has_z,
                   << shape_vertices << " vertices\n";
     }
 
-    if (parts > 1)
+    struct ring_t
+    {
+        int start;
+        int count;
+        bool is_outer;
+    };
+    std::vector<ring_t> rings;
+    rings.reserve(parts > 0 ? parts : 0);
+
+    for (int i = 0; i < parts; ++i)
+    {
+        const int start = polygon->panPartStart[i];
+        const int end = (i == parts - 1) ? shape_vertices : polygon->panPartStart[i + 1];
+        const int count = end - start;
+        const double area = signed_area(polygon->padfX + start, polygon->padfY + start, count);
+        const bool is_outer = area < 0.0;
+
+        if (g_verbose)
+        {
+            std::cerr << "\tring " << i << ": " << count << " vertices, signed area = " << area
+                      << " -> " << (is_outer ? "outer (CW)" : "inner (CCW)") << "\n";
+        }
+
+        rings.push_back({start, count, is_outer});
+    }
+
+    // Group rings into polygons. ESRI spec p. 9: "the order of rings in the points array is not
+    // significant", so a strictly correct grouping requires point-in-polygon tests against each
+    // outer ring. For an example tool we use the "associate each inner with the most-recent outer"
+    // pass, which matches the conventional producer order.
+    std::vector<std::vector<int>> polygons;
+    for (int i = 0; i < static_cast<int>(rings.size()); ++i)
+    {
+        if (rings[i].is_outer || polygons.empty())
+            polygons.push_back({i});
+        else
+            polygons.back().push_back(i);
+    }
+
+    const bool is_multi = polygons.size() > 1;
+
+    if (is_multi)
         out << "MULTI";
     out << "POLYGON";
     if (has_z)
         out << " Z";
     if (has_m)
         out << " M";
-    out << " (";
+    out << " ";
 
-    const auto format_part = [&](int i) {
-        const int part_start = (parts == 0) ? 0 : polygon->panPartStart[i];
-        const int next_part =
-            (parts == 0) ? 1 : ((i == parts - 1) ? shape_vertices : polygon->panPartStart[i + 1]);
-        const int part_vertices = next_part - part_start;
-
-        if (g_verbose)
-        {
-            std::cerr << "\tpart " << i;
-            if (parts > 0)
-            {
-                const int type_ = polygon->panPartType[i];
-                const part_type type = int2partt(type_);
-                std::cerr << " of type " << partt2str(type) << " (" << type_ << ")";
-            }
-            std::cerr << " starts at " << part_start << " and goes to " << next_part << " with "
-                      << part_vertices << " vertices\n";
-        }
+    const auto emit_ring = [&](int ring_idx) {
+        const auto& r = rings[ring_idx];
         output_wkt_cs(out,
-                      polygon->padfX + part_start,
-                      polygon->padfY + part_start,
-                      polygon->padfZ + part_start,
-                      polygon->padfM + part_start,
+                      polygon->padfX + r.start,
+                      polygon->padfY + r.start,
+                      polygon->padfZ + r.start,
+                      polygon->padfM + r.start,
                       has_z,
                       has_m,
-                      part_vertices);
+                      r.count);
     };
 
-    format_part(0);
-    for (int p = 1; p < parts; ++p)
+    out << "(";
+    for (size_t p = 0; p < polygons.size(); ++p)
     {
-        out << ", ";
-        format_part(p);
+        if (p > 0)
+            out << ", ";
+        if (is_multi)
+            out << "(";
+        for (size_t r = 0; r < polygons[p].size(); ++r)
+        {
+            if (r > 0)
+                out << ", ";
+            emit_ring(polygons[p][r]);
+        }
+        if (is_multi)
+            out << ")";
     }
-
     out << ")";
 }
 
