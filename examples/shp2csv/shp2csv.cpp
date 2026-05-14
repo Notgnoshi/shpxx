@@ -194,6 +194,36 @@ shape_type int2shapet(int shp_type)
     }
 }
 
+struct dbf_field_t
+{
+    std::string name;
+    DBFFieldType type;
+    int width;
+    int decimals;
+};
+
+// Read the DBF schema (field names, types, widths). Returns an empty vector
+// if dbf is null. Field names from shapelib are written into an 11-char buffer
+// (10 chars + null per dBase spec); v1.6.3 null-terminates, but we size +1 to
+// be defensive against older builds.
+std::vector<dbf_field_t> read_dbf_schema(DBFHandle dbf)
+{
+    std::vector<dbf_field_t> fields;
+    if (dbf == nullptr)
+        return fields;
+    const int n = DBFGetFieldCount(dbf);
+    fields.reserve(n);
+    for (int i = 0; i < n; ++i)
+    {
+        char name_buf[12] = {0};
+        int width = 0;
+        int decimals = 0;
+        const DBFFieldType type = DBFGetFieldInfo(dbf, i, name_buf, &width, &decimals);
+        fields.push_back({std::string(name_buf), type, width, decimals});
+    }
+    return fields;
+}
+
 std::string shapet2str(shape_type type)
 {
     switch (type)
@@ -615,22 +645,35 @@ void output_wkt_shape(std::ostream& out, const SHPObject* shape, bool has_z, boo
     out << "\"";
 }
 
-void output_csv_header(std::ostream& out)
+void output_csv_header(std::ostream& out, const std::vector<dbf_field_t>& dbf_fields)
 {
     out << "id,type,parts,vertices"
-        << ",min_x,max_x,min_y,max_y,min_z,max_z,min_m,max_m"
-        //! @todo attribute columns
-        << ",geometry\n";
+        << ",min_x,max_x,min_y,max_y,min_z,max_z,min_m,max_m";
+    // DBF field names per dBase spec are A-Z/0-9/_ only and <=10 chars long, so no CSV escaping is
+    // needed. Prefix with "dbf_" to avoid collisions with our metadata column names (e.g.
+    // data/point.dbf has an `id` field).
+    for (const auto& f : dbf_fields)
+        out << ",dbf_" << f.name;
+    out << ",geometry\n";
 }
 
-void output_csv_object(std::ostream& out, const SHPObject* object, bool has_z, bool has_m)
+void output_csv_object(std::ostream& out,
+                       const SHPObject* object,
+                       bool has_z,
+                       bool has_m,
+                       const std::vector<dbf_field_t>& dbf_fields,
+                       DBFHandle dbf)
 {
     out << object->nShapeId << "," << object->nSHPType << "," << object->nParts << ","
         << object->nVertices << "," << object->dfXMin << "," << object->dfXMax << ","
         << object->dfYMin << "," << object->dfYMax << "," << object->dfZMin << "," << object->dfZMax
-        << "," << object->dfMMin << "," << object->dfMMax << ",";
-    //! @todo attributes
-    //! @todo escape quotes and newlines in string attributes
+        << "," << object->dfMMin << "," << object->dfMMax;
+
+    // TODO: Parse DBF values and print them
+    (void)dbf;
+    for (size_t i = 0; i < dbf_fields.size(); ++i)
+        out << ",";
+    out << ",";
     output_wkt_shape(out, object, has_z, has_m);
     out << "\n";
 }
@@ -653,8 +696,23 @@ int main(int argc, const char* argv[])
     std::array<double, 4> min_bound = {0};
     std::array<double, 4> max_bound = {0};
 
-    //! @todo DBF
     SHPGetInfo(shapefile, &num_features, &shptype, min_bound.data(), max_bound.data());
+    DBFHandle dbf = DBFOpen(options.input_filename.c_str(), "rb");
+    std::vector<dbf_field_t> dbf_fields;
+    if (dbf != nullptr)
+    {
+        const int dbf_records = DBFGetRecordCount(dbf);
+        if (dbf_records != num_features)
+        {
+            std::cerr << "DBF record count (" << dbf_records << ") does not match shape count ("
+                      << num_features << "); ignoring DBF\n";
+            DBFClose(dbf);
+            dbf = nullptr;
+        } else
+        {
+            dbf_fields = read_dbf_schema(dbf);
+        }
+    }
     const shape_type type = int2shapet(shptype);
     if (type == shape_type::error)
     {
@@ -706,7 +764,7 @@ int main(int argc, const char* argv[])
         break;
     }
 
-    output_csv_header(options.output);
+    output_csv_header(options.output, dbf_fields);
 
     for (int feature = 0; feature < num_features; ++feature)
     {
@@ -716,10 +774,12 @@ int main(int argc, const char* argv[])
             std::cerr << "Failed to read feature " << feature << " from shapefile\n";
             return 1;
         }
-        //! @todo attributes
-        output_csv_object(options.output, object, has_z, has_m);
+        output_csv_object(options.output, object, has_z, has_m, dbf_fields, dbf);
         SHPDestroyObject(object);
     }
+
+    if (dbf != nullptr)
+        DBFClose(dbf);
 
     SHPClose(shapefile);
     return 0;
