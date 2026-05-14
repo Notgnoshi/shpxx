@@ -51,7 +51,7 @@ SAHooks make_sahooks()
 
     static_assert(std::is_pointer_v<SAFile>, "SAFile not a pointer");
 
-    hooks.FOpen = [](const char* file_name, const char* perms) {
+    hooks.FOpen = [](const char* file_name, const char* perms, void* /*pvUserData*/) {
         return static_cast<SAFile>(IoHandlerT::open(file_name, io::to_openmode(perms)));
     };
 
@@ -63,7 +63,7 @@ SAHooks make_sahooks()
         return static_cast<SAOffset>(bytes_read / object_size);
     };
 
-    hooks.FWrite = [](void* buffer, SAOffset object_size, SAOffset count, SAFile file) {
+    hooks.FWrite = [](const void* buffer, SAOffset object_size, SAOffset count, SAFile file) {
         const auto bytes_written = IoHandlerT::write(static_cast<handle_t>(file),
                                                      static_cast<const uint8_t*>(buffer),
                                                      static_cast<offset_t>(object_size * count));
@@ -89,7 +89,7 @@ SAHooks make_sahooks()
         return IoHandlerT::close(static_cast<handle_t>(file)) ? 0 : EOF;
     };
 
-    hooks.Remove = [](const char* file_name) {
+    hooks.Remove = [](const char* file_name, void* /*pvUserData*/) {
         return IoHandlerT::remove(file_name);
     };
 
