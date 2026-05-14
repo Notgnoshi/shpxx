@@ -234,15 +234,20 @@ std::string shapet2str(shape_type type)
 
 void output_wkt_point(std::ostream& out, const SHPObject* point, bool has_z, bool has_m)
 {
-    const int parts = point->nParts;
+    // Point and MultiPoint records do not use parts; nVertices is 1 for Point and
+    // the count of points for MultiPoint. Disambiguate by shape type, not nParts.
     const int shape_vertices = point->nVertices;
+    const bool is_multi = (point->nSHPType == SHPT_MULTIPOINT
+                           || point->nSHPType == SHPT_MULTIPOINTM
+                           || point->nSHPType == SHPT_MULTIPOINTZ);
+
     if (g_verbose)
     {
-        std::cerr << "point " << point->nShapeId << " has " << parts << " parts and "
+        std::cerr << (is_multi ? "multipoint " : "point ") << point->nShapeId << " has "
                   << shape_vertices << " vertices\n";
     }
 
-    if (parts > 1)
+    if (is_multi)
         out << "MULTI";
     out << "POINT";
     if (has_z)
@@ -251,46 +256,26 @@ void output_wkt_point(std::ostream& out, const SHPObject* point, bool has_z, boo
         out << " M";
     out << " ";
 
-    if (parts > 1)
-        out << "(";
-
-    //! @todo part==0 case for the rest of the geometry types.
-    const auto format_point = [&](int i) {
-        const int part_start = (parts == 0) ? 0 : point->panPartStart[i];
-        const int next_part =
-            (parts == 0) ? 1 : ((i == parts - 1) ? shape_vertices : point->panPartStart[i + 1]);
-        const int part_vertices = next_part - part_start;
-
-        if (g_verbose)
-        {
-            std::cerr << "\tpart " << i;
-            if (parts > 0)
-            {
-                const int type_ = point->panPartType[i];
-                const part_type type = int2partt(type_);
-                std::cerr << " of type " << partt2str(type) << " (" << type_ << ")";
-            }
-            std::cerr << " starts at " << part_start << " and goes to " << next_part << " with "
-                      << part_vertices << " vertices\n";
-        }
-
-        out << "(" << point->padfX[i] << " " << point->padfY[i];
+    const auto format_coords = [&](int v) {
+        out << point->padfX[v] << " " << point->padfY[v];
         if (has_z)
-            out << " " << point->padfZ[i];
+            out << " " << point->padfZ[v];
         if (has_m)
-            out << " " << point->padfM[i];
-        out << ")";
+            out << " " << point->padfM[v];
     };
 
-    format_point(0);
-    for (int p = 1; p < parts; ++p)
+    out << "(";
+    for (int v = 0; v < shape_vertices; ++v)
     {
-        out << ", ";
-        format_point(p);
+        if (v > 0)
+            out << ", ";
+        if (is_multi)
+            out << "(";
+        format_coords(v);
+        if (is_multi)
+            out << ")";
     }
-
-    if (parts > 1)
-        out << ")";
+    out << ")";
 }
 
 void output_wkt_cs(std::ostream& out,
