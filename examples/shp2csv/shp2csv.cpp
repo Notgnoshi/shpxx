@@ -1,9 +1,11 @@
 #include <boost/program_options.hpp>
 #include <shapefil.h>
 
+#include <cstdio>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -201,6 +203,39 @@ struct dbf_field_t
     int width;
     int decimals;
 };
+
+// Emit a string as a CSV field, escaping with RFC 4180: if the value contains a comma,
+// double-quote, CR, or LF, wrap the field in double-quotes and double any internal quotes.
+// Otherwise pass through unchanged.
+void csv_escape_string(std::ostream& out, const char* s)
+{
+    if (s == nullptr)
+        return;
+    bool needs_quoting = false;
+    for (const char* p = s; *p != '\0'; ++p)
+    {
+        const char c = *p;
+        if (c == ',' || c == '"' || c == '\n' || c == '\r')
+        {
+            needs_quoting = true;
+            break;
+        }
+    }
+    if (!needs_quoting)
+    {
+        out << s;
+        return;
+    }
+    out << '"';
+    for (const char* p = s; *p != '\0'; ++p)
+    {
+        if (*p == '"')
+            out << "\"\"";
+        else
+            out << *p;
+    }
+    out << '"';
+}
 
 // Read the DBF schema (field names, types, widths). Returns an empty vector
 // if dbf is null. Field names from shapelib are written into an 11-char buffer
@@ -657,6 +692,56 @@ void output_csv_header(std::ostream& out, const std::vector<dbf_field_t>& dbf_fi
     out << ",geometry\n";
 }
 
+// Emit a single DBF field value into the CSV stream. NULL fields produce an empty cell.
+void emit_dbf_field(
+    std::ostream& out, DBFHandle dbf, int record, int field, const dbf_field_t& info)
+{
+    if (DBFIsAttributeNULL(dbf, record, field))
+        return;
+
+    switch (info.type)
+    {
+    case FTString:
+        csv_escape_string(out, DBFReadStringAttribute(dbf, record, field));
+        break;
+    case FTInteger:
+        out << DBFReadIntegerAttribute(dbf, record, field);
+        break;
+    case FTDouble:
+    {
+        // Honor the DBF field's declared decimals (e.g. N(21,6) -> 6 decimals). Use a local
+        // stringstream so we don't perturb the caller's stream state.
+        const double v = DBFReadDoubleAttribute(dbf, record, field);
+        std::ostringstream ss;
+        ss << std::fixed << std::setprecision(info.decimals) << v;
+        out << ss.str();
+        break;
+    }
+    case FTLogical:
+    {
+        // dBase logical is a single character T/F/Y/N or ? (uninitialized). Map definitively-true
+        // and definitively-false to true/false; emit empty for ? and anything unexpected.
+        const char* s = DBFReadLogicalAttribute(dbf, record, field);
+        if (s != nullptr && (s[0] == 'T' || s[0] == 'Y' || s[0] == 't' || s[0] == 'y'))
+            out << "true";
+        else if (s != nullptr && (s[0] == 'F' || s[0] == 'N' || s[0] == 'f' || s[0] == 'n'))
+            out << "false";
+        break;
+    }
+    case FTDate:
+    {
+        const SHPDate d = DBFReadDateAttribute(dbf, record, field);
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%04d-%02d-%02d", d.year, d.month, d.day);
+        out << buf;
+        break;
+    }
+    case FTInvalid:
+    default:
+        break;
+    }
+}
+
 void output_csv_object(std::ostream& out,
                        const SHPObject* object,
                        bool has_z,
@@ -669,10 +754,12 @@ void output_csv_object(std::ostream& out,
         << object->dfYMin << "," << object->dfYMax << "," << object->dfZMin << "," << object->dfZMax
         << "," << object->dfMMin << "," << object->dfMMax;
 
-    // TODO: Parse DBF values and print them
-    (void)dbf;
+    // DBF and SHP records share record IDs.
     for (size_t i = 0; i < dbf_fields.size(); ++i)
+    {
         out << ",";
+        emit_dbf_field(out, dbf, object->nShapeId, static_cast<int>(i), dbf_fields[i]);
+    }
     out << ",";
     output_wkt_shape(out, object, has_z, has_m);
     out << "\n";
