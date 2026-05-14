@@ -385,10 +385,7 @@ void output_wkt_polygon(std::ostream& out, const SHPObject* polygon, bool has_z,
         out << " Z";
     if (has_m)
         out << " M";
-    out << " ";
-
-    if (parts > 1)
-        out << "(";
+    out << " (";
 
     const auto format_part = [&](int i) {
         const int part_start = (parts == 0) ? 0 : polygon->panPartStart[i];
@@ -425,8 +422,7 @@ void output_wkt_polygon(std::ostream& out, const SHPObject* polygon, bool has_z,
         format_part(p);
     }
 
-    if (parts > 1)
-        out << ")";
+    out << ")";
 }
 
 void output_wkt_multipatch(std::ostream& out, const SHPObject* multipatch, bool has_z, bool has_m)
