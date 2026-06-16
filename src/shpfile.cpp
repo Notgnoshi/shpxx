@@ -38,6 +38,27 @@ shape_type shpfile_t::type() const noexcept { return m_shape_type; }
 coordinate_xyzm_t shpfile_t::min_bound() const noexcept { return m_min_bound; }
 coordinate_xyzm_t shpfile_t::max_bound() const noexcept { return m_max_bound; }
 
+std::optional<shplib::opaque_object_t> shpfile_t::read_index(std::size_t index) const noexcept
+{
+    const auto* file_handle = cast_shp_info(m_handle.get());
+
+    shplib::opaque_object_t object(cast_shp_object(
+        SHPReadObject(const_cast<SHPHandle>(file_handle), static_cast<int>(index))));
+
+    if (!object)
+    {
+        return std::nullopt;
+    }
+
+    const auto* object_ptr = cast_shp_object(object.get());
+    if (object_ptr->nSHPType == SHPT_NULL)
+    {
+        return std::nullopt;
+    }
+
+    return {std::move(object)};
+}
+
 coordinate_xyzm_t make_point(const std::array<double, 4>& data)
 {
     coordinate_xyzm_t point{};

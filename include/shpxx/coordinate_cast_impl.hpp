@@ -54,8 +54,8 @@ ToCoordT coordinate_cast(FromCoordT from)
     ToCoordT result;
     result.x = from.x;
     result.y = from.y;
-    copy_z_if_present(result, from);
-    copy_m_if_present(result, from);
+    internal::copy_z_if_present(result, from);
+    internal::copy_m_if_present(result, from);
     return result;
 }
 }  // namespace shpxx

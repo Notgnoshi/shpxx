@@ -6,6 +6,15 @@ instrument_coverage(shpxx)
 file(MAKE_DIRECTORY "${SHPXX_REPORTS_DIR}/shpxx-coverage")
 
 add_custom_target(
+    shpxx-clear-gcdas
+    COMMAND ${CMAKE_COMMAND} -DPATTERN="*.gcda" -P
+            ${CMAKE_CURRENT_LIST_DIR}/RemovePatternRecurse.cmake
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    COMMENT "Removing old coverage files..."
+)
+add_dependencies(run-shpxx-tests shpxx-clear-gcdas)
+
+add_custom_target(
     shpxx-coverage
     COMMAND
         "${GCOVR_PATH}" --xml "${SHPXX_REPORTS_DIR}/shpxx-coverage.xml" --html-details
